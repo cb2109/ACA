@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for i in {4..200}
+do
+	echo -n $i " "
+	./probe 602 602 602 $i $i $i 5
+done
+	
