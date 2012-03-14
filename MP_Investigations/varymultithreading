@@ -1,0 +1,24 @@
+#!/bin/bash
+
+make clean > /dev/null
+make circqueue_probe > /dev/null
+PROBSIZE=$1
+BLOCKSIZE=$2
+STEPS=$3
+for x in 1 2 3 4 5 6 7 8
+do
+  echo -n -e $x"\t"
+  export OMP_NUM_THREADS=$x 
+  export GOMP_CPU_AFFINITY=0-3
+  times="$(./probe $PROBSIZE $PROBSIZE $PROBSIZE $BLOCKSIZE $BLOCKSIZE $BLOCKSIZE $STEPS | grep time: | awk '{print $4}')"
+  result=$times
+  total=0
+  for word in $times
+  do
+    val="${word#time:}"
+    echo -n -e $val"\t"
+    total=$total+$val
+  done
+  echo "scale=4;($total)/5.0" | bc
+done
+
